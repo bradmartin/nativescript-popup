@@ -29,7 +29,7 @@ export interface PopupOptions {
   /**
    * The measurement unit for the height/width.
    */
-  unit?: "dp" | "px" | "%";
+  unit?: 'dp' | 'px' | '%';
 
   /**
    * The background color of the popup.

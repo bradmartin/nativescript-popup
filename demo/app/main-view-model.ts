@@ -1,6 +1,6 @@
-import { Observable } from 'tns-core-modules/data/observable';
+import { Observable } from '@nativescript/core/data/observable';
+import { ItemEventData } from '@nativescript/core/ui/list-view';
 import { Popup } from 'nativescript-popup';
-import { ItemEventData } from 'tns-core-modules/ui/list-view/list-view';
 
 export class HelloWorldModel extends Observable {
   private popup: Popup;
@@ -15,8 +15,9 @@ export class HelloWorldModel extends Observable {
     { name: 'Make' },
     { name: 'This' },
     { name: 'List' },
-    { name: 'Scroll' }
+    { name: 'Scroll' },
   ];
+
   constructor() {
     super();
   }
@@ -31,12 +32,18 @@ export class HelloWorldModel extends Observable {
       width: 80,
       unit: '%',
       elevation: 10,
-      borderRadius: 25
+      borderRadius: 25,
     });
-    this.popup.showPopup(source, view).then(data => {
+
+    console.dir(this.popup);
+
+    this.popup.showPopup(source, view).then((data) => {
       console.log(data);
-    });
+    }).catch(err => {
+      console.log(err);
+    })
   }
+
   hidePopup(index) {
     this.popup.hidePopup(index);
   }

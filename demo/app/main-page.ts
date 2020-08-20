@@ -1,19 +1,21 @@
-import * as observable from 'tns-core-modules/data/observable';
-import * as pages from 'tns-core-modules/ui/page';
+import {
+  Builder,
+  Button,
+  EventData,
+  knownFolders,
+  Label,
+  Page,
+  path as NSFilePath,
+  ScrollView,
+  StackLayout
+} from '@nativescript/core';
 import { HelloWorldModel } from './main-view-model';
-import { Label } from 'tns-core-modules/ui/label';
-import { StackLayout } from 'tns-core-modules/ui/layouts/stack-layout';
-import { ScrollView } from 'tns-core-modules/ui/scroll-view';
-import { ListView, ItemEventData } from 'tns-core-modules/ui/list-view';
-import { Button } from 'tns-core-modules/ui/button';
-import * as builder from 'tns-core-modules/ui/builder';
-import { fromObject } from 'tns-core-modules/data/observable';
-import * as fs from 'tns-core-modules/file-system';
 let page;
-let vm = new HelloWorldModel();
-export function pageLoaded(args: observable.EventData) {
+const vm = new HelloWorldModel();
+
+export function pageLoaded(args: EventData) {
   // Get the event sender
-  page = <pages.Page>args.object;
+  page = <Page>args.object;
   page.bindingContext = vm;
 }
 
@@ -37,9 +39,10 @@ export function showPopup() {
   stack.addChild(btn);
   const dismissBtn = new Button();
   dismissBtn.text = 'Hide';
-  dismissBtn.on('tap', args => {
+  dismissBtn.on('tap', (args) => {
     page.bindingContext.hidePopup();
   });
+
   stack.addChild(dismissBtn);
   const sv = new ScrollView();
   sv.content = stack;
@@ -47,8 +50,11 @@ export function showPopup() {
 }
 
 export function showPopupList() {
-  const listPath = fs.path.join(fs.knownFolders.currentApp().path, '/template/list.xml');
-  const component = builder.load(listPath);
+  const listPath = NSFilePath.join(
+    knownFolders.currentApp().path,
+    '/template/list.xml'
+  );
+  const component = Builder.load(listPath);
   component.bindingContext = vm;
   page.bindingContext.showPopup(page.getViewById('btnList'), component);
 }
