@@ -4,7 +4,12 @@
 
 # Installation
 
+NS 7 & higher
+
 `tns plugin add nativescript-popup`
+
+> NS 7
+`tns plugin add nativescript-popup@1.5.0`
 
 ## Screenshots
 
