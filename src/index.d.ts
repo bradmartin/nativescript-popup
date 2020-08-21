@@ -26,6 +26,17 @@ export interface PopupOptions {
    */
   width?: number;
 
+
+  /**
+   * The x position of the popup.
+   */
+  x?: number;
+
+  /**
+   * The y of the popup.
+   */
+  y?: number;
+
   /**
    * The measurement unit for the height/width.
    */

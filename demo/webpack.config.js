@@ -317,6 +317,7 @@ module.exports = (env) => {
           { from: { glob: '**/*.css' } },
           { from: { glob: '**/*.jpg' } },
           { from: { glob: '**/*.png' } },
+          { from: { glob: 'template/*.xml' } },
         ],
         { ignore: [`${relative(appPath, appResourcesFullPath)}/**`] }
       ),

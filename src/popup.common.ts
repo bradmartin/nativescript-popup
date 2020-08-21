@@ -9,4 +9,6 @@ export class PopupOptions {
   elevation?: number;
   borderRadius?: number;
   outsideTouchble?: boolean = true;
+  x?: number = 0;
+  y?: number = 0;
 }

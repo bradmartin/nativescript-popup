@@ -50,15 +50,11 @@ export function showPopup() {
 }
 
 export function showPopupList() {
-  const listPath = NSFilePath.join(
-    knownFolders.currentApp().path,
-    '/template/list.xml'
-  );
-  const component = Builder.load(listPath);
+  const component = Builder.load('~/template/list.xml');
   component.bindingContext = vm;
   page.bindingContext.showPopup(page.getViewById('btnList'), component);
 }
 
 export function showTemplatePopup(args) {
-  page.bindingContext.showPopup(page.getViewById('btn'), '~/template/bomb.xml');
+  page.bindingContext.showPopup(page.getViewById('tmptlBtn'), '~/template/bomb.xml', {y: 50});
 }

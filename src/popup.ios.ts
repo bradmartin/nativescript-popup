@@ -5,7 +5,8 @@ import {
   Frame,
   knownFolders,
   Screen,
-  View
+  View,
+  path as NSFilepath
 } from '@nativescript/core';
 import { layout } from '@nativescript/core/utils/utils';
 import { Common, PopupOptions } from './popup.common';
@@ -14,6 +15,7 @@ export class Popup extends Common {
   private _popupController: UIViewController;
   private _options: PopupOptions;
   private resolveData;
+  private _delegate;
   resolve;
   reject;
 
@@ -37,10 +39,13 @@ export class Popup extends Common {
       this.resolve = resolve;
       const isTablet = Device.deviceType === 'Tablet';
       let nativeView;
-      if (!this._popupController.popoverPresentationController.delegate) {
-        this._popupController.popoverPresentationController.delegate = UIPopoverPresentationControllerDelegateImpl.initWithOwner(
+      if (!this._delegate) {
+        this._delegate = UIPopoverPresentationControllerDelegateImpl.initWithOwner(
           new WeakRef(this)
         );
+      }
+      if (!this._popupController.popoverPresentationController.delegate) {
+        this._popupController.popoverPresentationController.delegate = this._delegate;
       }
       if (this._options.backgroundColor) {
         this._popupController.view.backgroundColor = new Color(
@@ -50,6 +55,10 @@ export class Popup extends Common {
       if (this._options.hideArrow) {
         this._popupController.popoverPresentationController.permittedArrowDirections = 0;
       }
+
+      const x = this._options.x || 0;
+      const y = this._options.y || 0;
+
       // check the view argument
       if (view instanceof View) {
         Frame.topmost()._addView(view);
@@ -62,28 +71,22 @@ export class Popup extends Common {
       } else if (typeof view === 'string' || view instanceof String) {
         // this is a template so use the builder to load the template
         let path;
-        let component: View;
-        if (view.startsWith('~')) {
-          view = view.replace('~', '');
-          path = knownFolders.currentApp().path;
-          component = Builder.load(path.join(path, view)) as View;
-        } else {
-          component = Builder.load(<any>view) as View;
-        }
+        let component = Builder.load(<any>view) as View;
         Frame.topmost()._addView(component);
         this._stylePopup(component, isTablet);
         this._popupController.preferredContentSize =
           component.nativeView.bounds.size;
-        nativeView = component.ios;
+        nativeView = component.nativeView;
       }
+
 
       // check the source argument
       if (source instanceof View) {
         this._popupController.popoverPresentationController.sourceView =
           source.nativeView;
         this._popupController.popoverPresentationController.sourceRect = CGRectMake(
-          0,
-          0,
+          x,
+          y,
           source.nativeView.frame.size.width,
           source.nativeView.frame.size.height
         );
@@ -94,8 +97,8 @@ export class Popup extends Common {
       } else if (source instanceof UIView) {
         this._popupController.popoverPresentationController.sourceView = source;
         this._popupController.popoverPresentationController.sourceRect = CGRectMake(
-          0,
-          0,
+          x,
+          y,
           source.frame.size.width,
           source.frame.size.height
         );
@@ -186,13 +189,13 @@ export class Popup extends Common {
           width = this._options.width
             ? this._options.width
             : isTablet
-            ? 400
-            : 300;
+              ? 400
+              : 300;
           height = this._options.height
             ? this._options.height
             : isTablet
-            ? 320
-            : 100;
+              ? 320
+              : 100;
         }
         layoutRootView(view, CGRectMake(0, 0, width, height));
         break;
@@ -224,22 +227,12 @@ const layoutRootView = function (rootView, parentBounds) {
   rootView.layout(left, top, width, height);
 };
 
-export class UIPopoverPresentationControllerDelegateImpl extends NSObject
-  implements UIPopoverPresentationControllerDelegate {
-  static ObjCProtocols = [UIPopoverPresentationControllerDelegate];
-  private _owner: WeakRef<Popup>;
-
-  static initWithOwner(owner: WeakRef<Popup>) {
-    const delegate = new UIPopoverPresentationControllerDelegateImpl();
-    delegate._owner = owner;
-    return delegate;
-  }
-
-  adaptivePresentationStyleForPresentationController?(
+const UIPopoverPresentationControllerDelegateImpl = (NSObject as any).extend({
+  adaptivePresentationStyleForPresentationController(
     controller: UIPresentationController
   ): UIModalPresentationStyle {
     return UIModalPresentationStyle.None;
-  }
+  },
 
   popoverPresentationControllerDidDismissPopover(
     popoverPresentationController: UIPopoverPresentationController
@@ -247,8 +240,7 @@ export class UIPopoverPresentationControllerDelegateImpl extends NSObject
     if (this._owner.get()) {
       this._owner.get().didDismiss();
     }
-  }
-
+  },
   popoverPresentationControllerShouldDismissPopover(
     popoverPresentationController: UIPopoverPresentationController
   ): any {
@@ -256,4 +248,11 @@ export class UIPopoverPresentationControllerDelegateImpl extends NSObject
       return this._owner.get().getOptions().outsideTouchble;
     }
   }
-}
+}, {
+  protocols: [UIPopoverPresentationControllerDelegate]
+});
+UIPopoverPresentationControllerDelegateImpl.initWithOwner = (owner: WeakRef<Popup>) => {
+  const delegate = new UIPopoverPresentationControllerDelegateImpl();
+  delegate._owner = owner;
+  return delegate;
+};

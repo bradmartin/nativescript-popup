@@ -26,13 +26,14 @@ export class HelloWorldModel extends Observable {
     this.hidePopup(`${this.items[args.index]['name']} : ${args.index}`);
   }
 
-  showPopup(source, view) {
+  showPopup(source, view, options = {}) {
     this.popup = new Popup({
       height: 30,
       width: 80,
       unit: '%',
       elevation: 10,
       borderRadius: 25,
+      ...options
     });
 
     console.dir(this.popup);

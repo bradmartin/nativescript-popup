@@ -48,26 +48,21 @@ export class Popup extends Common {
   }
 
   public showPopup(source: any, view: any): Promise<boolean> {
-    console.log('android source showpopup', this._popup);
-
     return new Promise((resolve, reject) => {
       this._popup.setOutsideTouchable(this._options.outsideTouchble);
       this.reject = reject;
       this.resolve = resolve;
       // check the view argument
+      const x = this._options.x || 0;
+      const y = this._options.y || 0;
       if (view instanceof android.view.View) {
-        console.log('android.view.View', view);
         this._popup.setContentView(view);
       } else if (view instanceof View) {
-        console.log('instanceof View', view, view.android, view.nativeView);
         Frame.topmost()._addView(view);
         this._stylePopup();
         this._view = view;
-        console.log('this._view', this._view);
-        debugger;
-        this._popup.setContentView(view.android);
+        this._popup.setContentView(view.nativeView);
       } else if (typeof view === 'string' || view instanceof String) {
-        console.log('typeof view === string', view);
         // this is a template so use the builder to load the template
         this._stylePopup();
         const stack = new StackLayout();
@@ -75,25 +70,16 @@ export class Popup extends Common {
         stack.removeChildren(); // ensure nothing in the stack
         let path;
         let component;
-        if (view.startsWith('~')) {
-          view = view.replace('~', '');
-          path = knownFolders.currentApp().path;
-          console.log(NSFilepath.join(path, view));
-          component = Builder.load(NSFilepath.join(path, view));
-          console.log(component);
-        } else {
-          component = Builder.load(<any>view);
-        }
+        component = Builder.load(<any>view);
         stack.addChild(component);
         this._view = stack;
-        this._popup.setContentView(stack.android);
+        this._popup.setContentView(stack.nativeView);
       }
-
       // check the source argument
       if (source instanceof android.view.View) {
-        this._popup.showAsDropDown(source);
+        this._popup.showAsDropDown(source, x, y);
       } else if (source instanceof View) {
-        this._popup.showAsDropDown(source.android);
+        this._popup.showAsDropDown(source.nativeView, x, y);
       }
     });
   }
