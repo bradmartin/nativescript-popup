@@ -42,7 +42,7 @@ export class HelloWorldModel extends Observable {
       console.log(data);
     }).catch(err => {
       console.log(err);
-    })
+    });
   }
 
   hidePopup(index) {

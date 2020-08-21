@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-
-import { Item } from './item';
-import { ItemService } from './item.service';
-import { Page } from 'tns-core-modules/ui/page';
-import * as fs from 'tns-core-modules/file-system';
-import { ItemEventData } from 'tns-core-modules/ui/list-view';
 import { Popup } from 'nativescript-popup';
-import { StackLayout } from 'tns-core-modules/ui/layouts/stack-layout';
+import * as fs from 'tns-core-modules/file-system';
+import * as builder from 'tns-core-modules/ui/builder';
 import { Button } from 'tns-core-modules/ui/button';
 import { Label } from 'tns-core-modules/ui/label';
+import { StackLayout } from 'tns-core-modules/ui/layouts/stack-layout';
+import { ItemEventData } from 'tns-core-modules/ui/list-view';
+import { Page } from 'tns-core-modules/ui/page';
 import { ScrollView } from 'tns-core-modules/ui/scroll-view';
-import * as builder from 'tns-core-modules/ui/builder';
+
 @Component({
   selector: 'ns-items',
   moduleId: __filename,
-  templateUrl: './items.component.html'
+  templateUrl: './items.component.html',
 })
 export class ItemsComponent implements OnInit {
   private popup: Popup;
@@ -29,7 +27,7 @@ export class ItemsComponent implements OnInit {
     { name: 'Make' },
     { name: 'This' },
     { name: 'List' },
-    { name: 'Scroll' }
+    { name: 'Scroll' },
   ];
 
   itemTap(args: ItemEventData) {
@@ -42,9 +40,9 @@ export class ItemsComponent implements OnInit {
       width: 80,
       unit: '%',
       elevation: 10,
-      borderRadius: 25
+      borderRadius: 25,
     });
-    this.popup.showPopup(source, view).then(data => {
+    this.popup.showPopup(source, view).then((data) => {
       console.log(data);
     });
   }
@@ -75,7 +73,7 @@ export class ItemsComponent implements OnInit {
     stack.addChild(btn);
     const dismissBtn = new Button();
     dismissBtn.text = 'Hide';
-    dismissBtn.on('tap', args => {
+    dismissBtn.on('tap', (args) => {
       this.hidePopup();
     });
     stack.addChild(dismissBtn);

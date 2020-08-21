@@ -3,8 +3,6 @@ import {
   Color,
   Device,
   Frame,
-  knownFolders,
-  path as NSFilepath,
   Screen,
   StackLayout,
   View
@@ -68,9 +66,7 @@ export class Popup extends Common {
         const stack = new StackLayout();
         Frame.topmost()._addView(stack);
         stack.removeChildren(); // ensure nothing in the stack
-        let path;
-        let component;
-        component = Builder.load(<any>view);
+        const component = Builder.load(<any>view);
         stack.addChild(component);
         this._view = stack;
         this._popup.setContentView(stack.nativeView);

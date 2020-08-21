@@ -3,10 +3,8 @@ import {
   Color,
   Device,
   Frame,
-  knownFolders,
   Screen,
-  View,
-  path as NSFilepath
+  View
 } from '@nativescript/core';
 import { layout } from '@nativescript/core/utils/utils';
 import { Common, PopupOptions } from './popup.common';
@@ -23,7 +21,7 @@ export class Popup extends Common {
     super();
     this._options = new PopupOptions();
     if (options) {
-      Object.keys(options).forEach((key) => {
+      Object.keys(options).forEach(key => {
         this._options[key] = options[key];
       });
     }
@@ -70,15 +68,13 @@ export class Popup extends Common {
         nativeView = view;
       } else if (typeof view === 'string' || view instanceof String) {
         // this is a template so use the builder to load the template
-        let path;
-        let component = Builder.load(<any>view) as View;
+        const component = Builder.load(<any>view) as View;
         Frame.topmost()._addView(component);
         this._stylePopup(component, isTablet);
         this._popupController.preferredContentSize =
           component.nativeView.bounds.size;
         nativeView = component.nativeView;
       }
-
 
       // check the source argument
       if (source instanceof View) {
@@ -116,11 +112,11 @@ export class Popup extends Common {
     }
     this.resolve = null;
     this.reject = null;
-  };
+  }
 
   getOptions = () => {
     return this._options;
-  };
+  }
 
   public hidePopup(data?: any) {
     this.resolveData = data;
@@ -189,13 +185,13 @@ export class Popup extends Common {
           width = this._options.width
             ? this._options.width
             : isTablet
-              ? 400
-              : 300;
+            ? 400
+            : 300;
           height = this._options.height
             ? this._options.height
             : isTablet
-              ? 320
-              : 100;
+            ? 320
+            : 100;
         }
         layoutRootView(view, CGRectMake(0, 0, width, height));
         break;
@@ -206,7 +202,7 @@ export class Popup extends Common {
 /*
   Replacement for _layoutRootView method removed in NativeScript 6
 */
-const layoutRootView = function (rootView, parentBounds) {
+const layoutRootView = function(rootView, parentBounds) {
   if (!rootView || !parentBounds) {
     return;
   }
@@ -227,31 +223,36 @@ const layoutRootView = function (rootView, parentBounds) {
   rootView.layout(left, top, width, height);
 };
 
-const UIPopoverPresentationControllerDelegateImpl = (NSObject as any).extend({
-  adaptivePresentationStyleForPresentationController(
-    controller: UIPresentationController
-  ): UIModalPresentationStyle {
-    return UIModalPresentationStyle.None;
-  },
+const UIPopoverPresentationControllerDelegateImpl = (NSObject as any).extend(
+  {
+    adaptivePresentationStyleForPresentationController(
+      controller: UIPresentationController
+    ): UIModalPresentationStyle {
+      return UIModalPresentationStyle.None;
+    },
 
-  popoverPresentationControllerDidDismissPopover(
-    popoverPresentationController: UIPopoverPresentationController
-  ): void {
-    if (this._owner.get()) {
-      this._owner.get().didDismiss();
+    popoverPresentationControllerDidDismissPopover(
+      popoverPresentationController: UIPopoverPresentationController
+    ): void {
+      if (this._owner.get()) {
+        this._owner.get().didDismiss();
+      }
+    },
+    popoverPresentationControllerShouldDismissPopover(
+      popoverPresentationController: UIPopoverPresentationController
+    ): any {
+      if (this._owner.get()) {
+        return this._owner.get().getOptions().outsideTouchble;
+      }
     }
   },
-  popoverPresentationControllerShouldDismissPopover(
-    popoverPresentationController: UIPopoverPresentationController
-  ): any {
-    if (this._owner.get()) {
-      return this._owner.get().getOptions().outsideTouchble;
-    }
+  {
+    protocols: [UIPopoverPresentationControllerDelegate]
   }
-}, {
-  protocols: [UIPopoverPresentationControllerDelegate]
-});
-UIPopoverPresentationControllerDelegateImpl.initWithOwner = (owner: WeakRef<Popup>) => {
+);
+UIPopoverPresentationControllerDelegateImpl.initWithOwner = (
+  owner: WeakRef<Popup>
+) => {
   const delegate = new UIPopoverPresentationControllerDelegateImpl();
   delegate._owner = owner;
   return delegate;
