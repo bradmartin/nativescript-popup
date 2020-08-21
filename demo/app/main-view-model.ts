@@ -36,8 +36,6 @@ export class HelloWorldModel extends Observable {
       ...options
     });
 
-    console.dir(this.popup);
-
     this.popup.showPopup(source, view).then((data) => {
       console.log(data);
     }).catch(err => {
