@@ -5,7 +5,7 @@ on: [push]
 
 jobs:
   job1:
-    name: Android Builds & Test
+    name: Android Builds
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
@@ -21,6 +21,9 @@ jobs:
 
       - name: Build Vanilla Android Demo App
         run: npm run ci.vanilla.android.build
+
+      - name: Build Ng Android Demo App
+        run: npm run ci.ng.android.build
 
       # - name: Install Android sdkmanager
       #   run: |
@@ -48,3 +51,6 @@ jobs:
 
       - name: Build Vanilla iOS Demo App
         run: npm run ci.vanilla.ios.build
+
+      - name: Build Ng iOS Demo App
+        run: npm run ci.ng.ios.build
